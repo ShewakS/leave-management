@@ -123,9 +123,9 @@ const SimpleAuth = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>{isLogin ? 'Welcome Back' : 'Create Account'}</CardTitle>
+          <CardTitle>Welcome to Sri Eshwar's Portal</CardTitle>
           <CardDescription>
-            {isLogin ? 'Sign in to your account' : 'Register for Leave Route Hub'}
+            {isLogin ? 'Sign in to Sri Eshwar\'s Leave Management System' : 'Register for Sri Eshwar\'s Leave Management System'}
           </CardDescription>
         </CardHeader>
         <CardContent>

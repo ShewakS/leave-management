@@ -163,7 +163,7 @@ const SimpleStudentDashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
       <header className="bg-card border-b shadow-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-primary">Student Portal</h1>
+          <h1 className="text-2xl font-bold text-primary">Sri Eshwar Student Portal</h1>
           <div className="flex items-center gap-4">
             <Button variant="ghost" onClick={() => window.location.href = '/calendar'}>
               <Calendar className="mr-2 h-4 w-4" />

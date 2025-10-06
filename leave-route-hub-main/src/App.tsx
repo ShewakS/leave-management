@@ -10,6 +10,7 @@ import SimpleStudentDashboard from "./pages/SimpleStudentDashboard";
 import SimpleAdvisorDashboard from "./pages/SimpleAdvisorDashboard";
 import SimpleHODDashboard from "./pages/SimpleHODDashboard";
 import SimpleAcademicCalendar from "./pages/SimpleAcademicCalendar";
+import UserManagement from "./pages/UserManagement";
 import StudentDashboard from "./pages/StudentDashboard";
 import AdvisorDashboard from "./pages/AdvisorDashboard";
 import HODDashboard from "./pages/HODDashboard";
@@ -107,6 +108,7 @@ const App = () => (
           <Route path="/advisor" element={<SimpleAdvisorDashboard />} />
           <Route path="/hod" element={<SimpleHODDashboard />} />
           <Route path="/calendar" element={<SimpleAcademicCalendar />} />
+          <Route path="/users" element={<UserManagement />} />
           <Route path="*" element={<div>Page not found</div>} />
         </Routes>
       </BrowserRouter>
