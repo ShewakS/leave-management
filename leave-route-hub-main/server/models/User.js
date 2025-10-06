@@ -27,6 +27,10 @@ const UserSchema = new mongoose.Schema({
   department: {
     type: String,
     trim: true
+  },
+  section: {
+    type: String,
+    trim: true
   }
 }, {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }

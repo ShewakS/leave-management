@@ -20,7 +20,7 @@ router.post('/signup', [
       return res.status(400).json({ message: 'Validation errors', errors: errors.array() });
     }
 
-    const { email, password, full_name, role, department } = req.body;
+    const { email, password, full_name, role, department, section } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -34,7 +34,8 @@ router.post('/signup', [
       password,
       full_name,
       role: role || 'student',
-      department
+      department,
+      section
     });
 
     await user.save();
@@ -53,7 +54,8 @@ router.post('/signup', [
         email: user.email,
         full_name: user.full_name,
         role: user.role,
-        department: user.department
+        department: user.department,
+        section: user.section
       },
       token
     });
@@ -102,7 +104,8 @@ router.post('/signin', [
         email: user.email,
         full_name: user.full_name,
         role: user.role,
-        department: user.department
+        department: user.department,
+        section: user.section
       },
       token
     });

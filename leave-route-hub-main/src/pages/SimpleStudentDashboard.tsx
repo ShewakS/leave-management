@@ -15,6 +15,7 @@ interface AuthUser {
   full_name: string;
   role: string;
   department?: string;
+  section?: string;
 }
 
 interface LeaveApplication {
@@ -170,7 +171,7 @@ const SimpleStudentDashboard = () => {
             </Button>
             <div className="text-sm">
               <p className="font-medium">{user.full_name}</p>
-              <p className="text-muted-foreground">{user.department}</p>
+              <p className="text-muted-foreground">{user.department} {user.section ? `· Sec ${user.section}` : ''}</p>
             </div>
             <Button variant="outline" onClick={signOut}>
               <LogOut className="mr-2 h-4 w-4" />

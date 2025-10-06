@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,6 +13,7 @@ interface AuthUser {
   full_name: string;
   role: string;
   department?: string;
+  section?: string;
 }
 
 interface LeaveApplication {
@@ -37,6 +39,8 @@ const SimpleAdvisorDashboard = () => {
   const [selectedApp, setSelectedApp] = useState<string | null>(null);
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(false);
+  const [sectionEditing, setSectionEditing] = useState(false);
+  const [newSection, setNewSection] = useState('');
 
   useEffect(() => {
     // Get user from localStorage
@@ -48,6 +52,7 @@ const SimpleAdvisorDashboard = () => {
         return;
       }
       setUser(parsedUser);
+      setNewSection(parsedUser.section || '');
       fetchApplications();
     } else {
       window.location.href = '/';
@@ -124,6 +129,33 @@ const SimpleAdvisorDashboard = () => {
     window.location.href = '/';
   };
 
+  const updateSection = async () => {
+    try {
+      if (!newSection.trim()) return toast.error('Section cannot be empty');
+      const token = localStorage.getItem('auth_token');
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+      const res = await fetch(`${API_BASE_URL}/users/me/section`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ section: newSection.trim() })
+      });
+      const data = await res.json();
+      if (!res.ok) return toast.error(data.message || 'Failed to update section');
+      toast.success('Section updated');
+      setSectionEditing(false);
+      setUser(data.user as any);
+      const authUser = JSON.parse(localStorage.getItem('auth_user') || '{}');
+      localStorage.setItem('auth_user', JSON.stringify({ ...authUser, section: data.user.section }));
+      // Refetch to apply visibility constraints
+      fetchApplications();
+    } catch (e) {
+      toast.error('Network error');
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       pending_advisor: { label: 'Pending Review', className: 'bg-yellow-100 text-yellow-800' },
@@ -156,7 +188,7 @@ const SimpleAdvisorDashboard = () => {
             </Button>
             <div className="text-sm">
               <p className="font-medium">{user.full_name}</p>
-              <p className="text-muted-foreground">{user.department}</p>
+              <p className="text-muted-foreground">{user.department} {user.section ? `· Sec ${user.section}` : ''}</p>
             </div>
             <Button variant="outline" onClick={signOut}>
               <LogOut className="mr-2 h-4 w-4" />
@@ -167,7 +199,24 @@ const SimpleAdvisorDashboard = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <h2 className="text-3xl font-bold mb-6">Leave Applications</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-3xl font-bold">Leave Applications</h2>
+          <div className="flex items-center gap-2">
+            {!sectionEditing ? (
+              <>
+                <span className="text-sm text-muted-foreground">My Section:</span>
+                <span className="font-medium">{user.section || 'Not set'}</span>
+                <Button variant="outline" size="sm" onClick={() => setSectionEditing(true)}>Change</Button>
+              </>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Input value={newSection} onChange={(e) => setNewSection(e.target.value)} placeholder="e.g., A" className="w-24" />
+                <Button size="sm" onClick={updateSection}>Save</Button>
+                <Button size="sm" variant="ghost" onClick={() => { setSectionEditing(false); setNewSection(user.section || ''); }}>Cancel</Button>
+              </div>
+            )}
+          </div>
+        </div>
 
         <div className="grid gap-4">
           {applications.length === 0 ? (

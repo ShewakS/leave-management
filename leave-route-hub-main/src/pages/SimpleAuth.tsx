@@ -13,6 +13,7 @@ const SimpleAuth = () => {
   const [fullName, setFullName] = useState('');
   const [role, setRole] = useState('');
   const [department, setDepartment] = useState('');
+  const [section, setSection] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,7 +43,8 @@ const SimpleAuth = () => {
             email: data.user.email,
             full_name: data.user.full_name,
             role: data.user.role,
-            department: data.user.department
+            department: data.user.department,
+            section: data.user.section
           }));
           
           toast.success('Signed in successfully!');
@@ -76,7 +78,8 @@ const SimpleAuth = () => {
             password,
             full_name: fullName,
             role,
-            department
+            department,
+            section
           }),
         });
 
@@ -90,7 +93,8 @@ const SimpleAuth = () => {
             email: data.user.email,
             full_name: data.user.full_name,
             role: data.user.role,
-            department: data.user.department
+            department: data.user.department,
+            section: data.user.section
           }));
           
           toast.success('Account created successfully!');
@@ -156,13 +160,35 @@ const SimpleAuth = () => {
 
                 <div>
                   <Label htmlFor="department">Department</Label>
-                  <Input
-                    id="department"
-                    type="text"
-                    value={department}
-                    onChange={(e) => setDepartment(e.target.value)}
-                    placeholder="Computer Science"
-                  />
+                  <Select value={department} onValueChange={setDepartment}>
+                    <SelectTrigger id="department">
+                      <SelectValue placeholder="Select department" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="CSE">CSE</SelectItem>
+                      <SelectItem value="IT">IT</SelectItem>
+                      <SelectItem value="ECE">ECE</SelectItem>
+                      <SelectItem value="AIDS">AIDS</SelectItem>
+                      <SelectItem value="AIML">AIML</SelectItem>
+                      <SelectItem value="EEE">EEE</SelectItem>
+                      <SelectItem value="MECH">MECH</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="section">Section</Label>
+                  <Select value={section} onValueChange={setSection}>
+                    <SelectTrigger id="section">
+                      <SelectValue placeholder="Select section" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="A">A</SelectItem>
+                      <SelectItem value="B">B</SelectItem>
+                      <SelectItem value="C">C</SelectItem>
+                      <SelectItem value="D">D</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </>
             )}

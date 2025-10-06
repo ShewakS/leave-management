@@ -24,6 +24,10 @@ router.get('/', auth, async (req, res) => {
       } else {
         filter.status = { $in: ['pending_advisor', 'advisor_approved', 'advisor_rejected'] };
       }
+      // Restrict by department AND section
+      const User = require('../models/User');
+      const students = await User.find({ role: 'student', department: user.department, section: user.section }).select('_id');
+      filter.student_id = { $in: students.map(s => s._id) };
     } else if (user.role === 'hod') {
       // HODs see advisor-approved applications and their reviewed ones
       if (status) {
@@ -31,6 +35,10 @@ router.get('/', auth, async (req, res) => {
       } else {
         filter.status = { $in: ['advisor_approved', 'hod_approved', 'hod_rejected'] };
       }
+      // Restrict by department only
+      const User = require('../models/User');
+      const students = await User.find({ role: 'student', department: user.department }).select('_id');
+      filter.student_id = { $in: students.map(s => s._id) };
     }
     
     // Apply additional filters
@@ -39,7 +47,7 @@ router.get('/', auth, async (req, res) => {
     }
 
     const applications = await LeaveApplication.find(filter)
-      .populate('student_id', 'full_name email department')
+      .populate('student_id', 'full_name email department section')
       .populate('advisor_reviewed_by', 'full_name')
       .populate('hod_reviewed_by', 'full_name')
       .sort({ created_at: -1 });
@@ -133,7 +141,8 @@ router.post('/', [
         auto_rejected: true,
         conflicting_events: restrictedEvents.map(event => ({
           title: event.title,
-          date: event.event_date,
+          start_date: event.start_date,
+          end_date: event.end_date,
           type: event.event_type
         }))
       });
@@ -168,7 +177,8 @@ router.post('/', [
       system_note: systemNote || null,
       conflicting_events: restrictedEvents.length > 0 ? restrictedEvents.map(event => ({
         title: event.title,
-        date: event.event_date,
+        start_date: event.start_date,
+        end_date: event.end_date,
         type: event.event_type
       })) : null
     });
@@ -225,7 +235,7 @@ router.post('/:id/review', [
     await application.save();
     
     const updatedApplication = await LeaveApplication.findById(applicationId)
-      .populate('student_id', 'full_name email department')
+      .populate('student_id', 'full_name email department section')
       .populate('advisor_reviewed_by', 'full_name')
       .populate('hod_reviewed_by', 'full_name');
 
